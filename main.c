@@ -29,6 +29,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/select.h>
 
 
 #include "conf.h"
@@ -38,94 +42,56 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "telemetry.h"
 #include "mavlink_parse.h"
 #include "render.h"
-
-telemetry_data_t td;
 int main(int argc, char *argv[]) {
 
-  
-	//#ifdef RENDER
-	//render_data_t rd;
-//printf("render is defined\n");
-	//#endif
+	fd_set set;
+  	struct timeval timeout;
 
 	uint8_t buf[256];
 	size_t n;
-//	frsky_state_t fs;
-	//telemetry_data_t td;
-
 
 	if(argc != 2) {
 		printf("Usage: %s <font path>\n",argv[0]);
 		return 1;
 	}
 
-	#ifdef RENDER
-	render_init();
-	#endif
+        #ifdef RENDER
+	  render_init();
+        #endif
+	  
+        telemetry_data_t td;
+	telemetry_init(&td);
 
+        for(;;) {
+	  FD_ZERO(&set);
+	  FD_SET(STDIN_FILENO, &set);
+	  timeout.tv_sec = 2;
+	  timeout.tv_usec = 5e5;
+	  n = select(STDIN_FILENO + 1, &set, NULL, NULL, &timeout);
 
-	td.osd_alt_prev=0; 
-	td.osd_alt=0;
-	td.osd_alt_cnt=0 ; // counter for stable osd_alt
-	td.osd_got_home=0 ; // tels if got home position or not
-	td.osd_fix_type="no fix" ; 
-	td.osd_home_lat=0 ; // home latidude
-	td.osd_lat=0 ; // latidude
-	td.osd_lon=0 ; 
-	td.osd_home_lon=0 ; // home longitude
-	td.osd_home_alt=0 ; 
-	td.osd_home_distance=0 ; // distance from home
-	td.osd_home_direction=0; // Arrow direction pointing to home (1-16 to CW loop)
-	td.osd_home_alt=0 ; 
-	td.osd_home_distance=0 ; 
-	//td.osd_heading=0 ;
-	td.haltset=0 ;
-	td.osd_alt_prev=0;
-        td.osd_satellites_visible=0;
-	td.fix_type = 0;
-	td.start_lat = 0.0;
-	td.start_lng = 0.0;
-	td.armed = 0;
-	td.current = 0.0;
-	td.voltage = 0.0;
-	td.altitude = 0.0;
-	td.longitude = 0.0;
-        td.mode = "Test";
-	td.latitude = 0.0;
-	td.heading = 0.0;
-        td.roll = 0.0;
-	td.pitch = 0.0;
-	td.speed = 0.0;
-	td.battery_remaining = 0;
-	td.heading = 0;
+	  if(n > 0) {
+	    n = read(STDIN_FILENO, buf, sizeof(buf));
+	    //	    printf("n=%d\n",n);
+	    if(n == 0) {
+	      //	break; //EOF
+	    }
 
-        //td.voltage = 30.0;
-        //render(&td, &rd);
-
-
-	for(;;) {
-		n = read(STDIN_FILENO, buf, sizeof(buf));
-/*
-		//printf("%d \n",n);
-		if(n == 0) {
-		//	break; //EOF
-		}
-
-		if(n<0) {
-			perror("read");
-			exit(-1);
-		}
-*/
-		if(mavlink_parse_buffer(&td, buf, n)) {
-			#ifdef RENDER
-			printf("mavlink parse ok\n");
-			render(&td);
-			#endif
-		}
-//		else
-//printf("error parsing\n");
-	// td.voltage = 30.0;
-	//render(&td, &rd);
+	    if(n<0) {
+	      perror("read");
+	      exit(-1);
+	    }
+	    if(mavlink_parse_buffer(&td, buf, n)) {
+	      printf("mavlink parse ok\n");
+	      #ifdef RENDER
+	      render(&td);
+	      #endif 
+	    }
+	  } else {
+	    printf("skipping\n");
+	    #ifdef RENDER
+	      render_rx_status(&td,0);
+	    #endif  
+	  }
 
 	}
 	return 0;

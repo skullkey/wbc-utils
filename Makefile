@@ -18,7 +18,7 @@ vgfont:
 %.o: %.c
 	gcc -c -o $@ $< $(CPPFLAGS)
 
-mavlink_omx_osd_SBS: main.o mavlink_parse.o render.o
+mavlink_omx_osd_SBS: main.o mavlink_parse.o render.o telemetry.o
 	gcc -o $@ $^ $(LDFLAGS)
 
 

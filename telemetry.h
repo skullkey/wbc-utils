@@ -1,51 +1,63 @@
 #include <stdbool.h>
+#include <stdint.h>
+#include <time.h>
 
 #pragma once
 
+typedef struct {
+        uint32_t received_packet_cnt;
+        uint32_t wrong_crc_cnt;
+        int8_t current_signal_dbm;
+} wifi_adapter_rx_status_t;
 
-typedef struct{ 
+typedef struct {
+        time_t last_update;
+        uint32_t received_block_cnt;
+        uint32_t damaged_block_cnt;
+        uint32_t tx_restart_cnt;
+
+        uint32_t wifi_adapter_cnt;
+        wifi_adapter_rx_status_t adapter[8];
+} wifibroadcast_rx_status_t;
+
+#define ADAPTER_MAX 10
+
+typedef struct{    
 	uint8_t fix_type;
-	float osd_alt; 
-	uint8_t osd_alt_cnt ; // counter for stable osd_alt
-	uint8_t osd_got_home ; // tels if got home position or not
-	char* osd_fix_type ; 
-	float osd_lat ; // latidude
-	float osd_lon ; 
-	float osd_home_lat;               // home latidude
-	float osd_home_lon ; // home longitude 
-	float osd_home_direction; // Arrow direction pointing to home (1-16 to CW loop)
-	float osd_home_alt ; 
-	float osd_home_distance ;
-	uint8_t osd_satellites_visible;
-	//float osd_heading ;
-	bool haltset ;
-	float osd_alt_prev;
-	uint8_t armed;
-	uint8_t manual;
-        uint8_t hil_enable;
-	uint8_t stabilized;
-	uint8_t guided;
-	uint8_t aut;
-	uint16_t wp_target_bearing;
-	uint16_t wp_dist;
-	uint16_t wp_number;
-	char* mode;
-	double start_lat;
-	double start_lng;
-	float current;
-	float voltage;
-	float altitude;
-	double longitude;
-	double latitude;
-	float heading;
-	float speed;
-	float pitch;
-	float roll;
-	float battery_remaining;
+        uint8_t satellites_visible;
+	float altitude, latitude, longitude;
+
+	float pitch, roll, heading;
+	float ground_speed, air_speed;
+	float climb_rate;
 	float throttle;
-	float climb;
-	float home_alt;
-	float lat,lng,alt;
+
+	float voltage,current,rssi,battery_remaining;
 	
+	uint8_t home_location_set, home_altitude_set;
+	float home_altitude, home_latitude, home_longitude;
+	float home_direction, home_distance;
+	uint8_t home_altitude_counter; // used to check that altitude is stable before setting home altitude
+	float home_last_altitude;
+
+	char* mode;
+	char* fix_mode;
+
+	// waypoint
+	float wp_target_bearing;
+	float wp_dist;
+	uint8_t wp_number; 
+	float health_rate[ADAPTER_MAX];
+	float packet_rate[ADAPTER_MAX];
+	int8_t signal_strength[ADAPTER_MAX];
+	
+	wifibroadcast_rx_status_t *rx_status;
+	
+
+
 } telemetry_data_t;
+
+
+wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(void);
+void telemetry_init(telemetry_data_t *td);
 
