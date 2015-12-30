@@ -35,6 +35,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/select.h>
 
 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+#include <linux/stat.h>
+#include <string.h>
+
+#define FIFO_FILE       "/tmp/OSDFIFO"
+
 #include "conf.h"
 
 
@@ -42,6 +54,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "telemetry.h"
 #include "mavlink_parse.h"
 #include "render.h"
+
+
+uint8_t display_rx_stats=1;
+
+void handle_toggles(int fd){
+
+  char readbuf[10];
+  memset(readbuf, 0, 10);
+  int n = read(fd, readbuf, sizeof(readbuf));
+
+  if(n>0){
+    printf("Received string: %s\n", readbuf);
+    if(readbuf[0] == '0'){
+      display_rx_stats = 0;
+    } else {
+      display_rx_stats = 1;
+    }
+  }
+
+}
+
+
+
 int main(int argc, char *argv[]) {
 
 	fd_set set;
@@ -55,6 +90,14 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+
+
+        /* Create the FIFO if it does not exist */
+        umask(0);
+        mknod(FIFO_FILE, S_IFIFO|0666, 0);
+        int fd = open(FIFO_FILE,O_RDONLY | O_NONBLOCK);
+
+	
         #ifdef RENDER
 	  render_init();
         #endif
@@ -63,6 +106,8 @@ int main(int argc, char *argv[]) {
 	telemetry_init(&td);
 
         for(;;) {
+          handle_toggles(fd);
+	  
 	  FD_ZERO(&set);
 	  FD_SET(STDIN_FILENO, &set);
 	  timeout.tv_sec = 2;
@@ -83,13 +128,14 @@ int main(int argc, char *argv[]) {
 	    if(mavlink_parse_buffer(&td, buf, n)) {
 	      printf("mavlink parse ok\n");
 	      #ifdef RENDER
-	      render(&td);
+	      render(&td, display_rx_stats);
 	      #endif 
 	    }
 	  } else {
 	    printf("skipping\n");
 	    #ifdef RENDER
-	      render_rx_status(&td,0);
+	    render(&td, display_rx_stats);
+	      //render_rx_status(&td,0);
 	    #endif  
 	  }
 

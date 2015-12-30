@@ -250,8 +250,11 @@ printf("fix:%s\n", td->fix_mode);
             	td->satellites_visible = mavlink_msg_gps_raw_int_get_satellites_visible(&msg);
          	td->latitude = lng;
 		td->longitude = lat;
+		td->altitude = mavlink_msg_gps_raw_int_get_alt(&msg);
+		td->ground_speed = mavlink_msg_gps_raw_int_get_vel(&msg);		
 printf("lat:%f\n",lat);
 printf("lon:%f\n",lng);
+// printf("alt:%f\n",td->altitude); 
           break;
   	  }
           
@@ -271,7 +274,7 @@ printf("lon:%f\n",lng);
 
 	  case MAVLINK_MSG_ID_GLOBAL_POSITION_INT:
           {
-                // td->home_alt = td->alt - (mavlink_msg_global_position_int_get_relative_alt(&msg)*0.001);
+                 td->altitude = mavlink_msg_global_position_int_get_alt(&msg)*0.001;
                  break;          
      } 
 

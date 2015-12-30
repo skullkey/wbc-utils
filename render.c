@@ -23,7 +23,10 @@ int getHeight(float pos_y_percent)
 
 void draw_sat(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 {
+  char s[100];
   TextEnd(pos_x, pos_y, td->fix_mode, SerifTypeface, s_width/170 * scale);
+  sprintf(s,"Sat:%d",td->satellites_visible);
+  TextEnd(pos_x, pos_y+getHeight(5), s, SerifTypeface, s_width/170 * scale);  
 }
 
 void draw_center(telemetry_data_t *td, int pos_x, int pos_y, float scale)
@@ -31,8 +34,8 @@ void draw_center(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 
   //center circle
   int radius=3 * scale;
-  StrokeWidth(2);
-  Stroke(255,255,255,1);
+  //StrokeWidth(2);
+  //Stroke(255,255,255,1);
   float i;
   VGfloat x[100];
   VGfloat y[100];  
@@ -48,20 +51,21 @@ void draw_center(telemetry_data_t *td, int pos_x, int pos_y, float scale)
   x[z] = x[0];
   y[z] = y[0];
   z++;
-  Polyline(x, y, z);
-
+  //Polyline(x, y, z);
+  Fill(0, 0, 0, 1);
+  Circle(pos_x,pos_y,10*scale);
+  
   //home direction
   float length = 15 * scale;
-  float arg = 
-    td->home_direction;
+  float arg = td->home_direction/180.0*PI;
   VGfloat x1 = pos_x + sin(arg) * radius;
   VGfloat y1 = pos_y + cos(arg) * radius;
   VGfloat x2 = pos_x + sin(arg) * (radius + length);
   VGfloat y2 = pos_y + cos(arg) * (radius + length);
   Line(x1, y1, x2, y2);
 
-  //printf("home direction %f\n", td->osd_home_direction);
-
+  printf("home direction %f\n", td->home_direction);
+  printf(">> %f %f %f %f %f\n",x1,y1,x2,y2,arg);
 
 
   // altitude label
@@ -87,7 +91,7 @@ void draw_center(telemetry_data_t *td, int pos_x, int pos_y, float scale)
   Polyline(x, y, 6);
   char s[100];
   sprintf(s,"%.0f", td->altitude);//td->altitude);
-  TextMid(pos_x_r + width / 2 + width / 5, pos_y - s_width/170 * scale / 2, s, SerifTypeface,s_width/170 * scale);
+  TextMid(pos_x_r + width / 2 + width / 5, pos_y - s_width/170 * scale / 2, s, SerifTypeface,s_width/170 * scale*1.5);
   // velocity label
   int pos_x_l = pos_x - width / 2 - s_width / 4 - space;
   int pos_y_l = pos_y;
@@ -101,8 +105,8 @@ void draw_center(telemetry_data_t *td, int pos_x, int pos_y, float scale)
   y[3] = y[2] - label_height;
   x[4] = x[1];
   y[4] = y[3];
-  sprintf(s,"%.0f", td->ground_speed);
-  TextMid (pos_x_l - width/2 - width / 5 , pos_y - s_width/170 * scale /2, s, SerifTypeface, s_width/170 * scale);
+  sprintf(s,"%.0fm/s", td->ground_speed);
+  TextMid (pos_x_l - width/2 - width / 5 , pos_y - s_width/170 * scale /2, s, SerifTypeface, s_width/170 * scale*1.5);
   x[5] = x[0];
   y[5] = y[0];
   Polyline(x, y, 6);
@@ -236,7 +240,7 @@ void draw_center(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 void draw_lat_lon(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 {
   char s[100];
-  float space = 15 * scale;
+  float space = 10 * scale;
   sprintf(s, "Lon:%f", td->longitude);
   Text(pos_x, pos_y, s, SerifTypeface, s_width/170 * scale); 
   sprintf(s, "Lat:%f", td->latitude);
@@ -258,8 +262,15 @@ void draw_power(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 void draw_home_dist(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 {
   char s[100];
-  sprintf(s, "%5.0fm", td->home_distance);
+  if(!td->home_location_set) Stroke(0xff,0,0,1); else Stroke(HUD_R, HUD_G,HUD_B,1);
+  sprintf(s, "Dist:%5.0fm", td->home_distance);
   TextMid(pos_x, pos_y, s, SerifTypeface, s_width/170 * scale);
+  if(!td->home_altitude_set) Stroke(0xff,0,0,1); else Stroke(HUD_R, HUD_G,HUD_B,1);  
+  sprintf(s, "Alt:%5.0fm",(td->altitude - td->home_altitude));
+  TextMid(pos_x, pos_y+getHeight(5), s, SerifTypeface, s_width/170 * scale);
+
+  Stroke(HUD_R, HUD_G,HUD_B,1); 
+  
 }
 
 
@@ -296,14 +307,14 @@ void draw_compass(telemetry_data_t *td, int pos_x, int pos_y, float scale)
   VGfloat x[] = {pos_x - width_number / 2, pos_x + width_number / 2, pos_x + width_number/2 , pos_x - width_number / 2, pos_x - width_number / 2};
   VGfloat y[] = {pos_y + height_number / 2, pos_y + height_number / 2, pos_y - height_number / 2, pos_y - height_number / 2, pos_y + height_number / 2};
 
-  StrokeWidth(3);
-  Stroke(75,83,32,1); 
+  StrokeWidth(2);
+  //Stroke(75,83,32,1); 
   Polyline(x,y,5);
-  Fill(75,83,32,1);
+  //Fill(75,83,32,1);
 
   char s[100];
   sprintf(s, "%3.0f\xb0", td->heading);
-  TextMid(pos_x, pos_y-height_number/4, s , SerifTypeface, height_number/2);
+  TextMid(pos_x, pos_y-height_number/4, s , SerifTypeface, height_number/3);
 
   int width_triangle = 20 * scale;
   int space=50 * scale;
@@ -372,8 +383,8 @@ void draw_compass(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 	  }
 	}
       if(draw==true)
-	{
-	  TextMid(x, pos_y + height_comp / 3 + space / 3 * 1.6 , c, SerifTypeface, s_width/170 * scale );
+	{ StrokeWidth(1);
+	  TextMid(x, pos_y + height_comp / 3 + space / 3 * 1.6 , c, SerifTypeface, s_width/170 * 2.5 );
 	  draw=false;
 	}
     }
@@ -413,31 +424,37 @@ void render_init()
 
 }
 
-void render(telemetry_data_t *td) 
+
+void render(telemetry_data_t *td, uint8_t display_rx_stats) 
 {
 
   Start(s_width, s_height);
 
   //Background(0,0,0);
   //draw_bat      (td, getWidth(10), getHeight(90), 3);
-  Stroke(75,83,32,1);
+ 
+  Fill(HUD_R,HUD_G,HUD_B,1);
+  Stroke(HUD_R,HUD_G,HUD_B,1);
+  StrokeWidth(2);
   draw_compass  (td, getWidth(50), getHeight(85), 1.5);
-  draw_power    (td, getWidth(20), getHeight(5),  2);
+  //draw_power    (td, getWidth(20), getHeight(5),  2);
+  draw_sat      (td, getWidth(90), getHeight(90), 3);
 	
 
-  StrokeWidth(1);Stroke(255,255,255,1);
-  draw_sat      (td, getWidth(90), getHeight(90), 3);
-  draw_lat_lon  (td, getWidth(10), getHeight(10), 3);
+  StrokeWidth(0.6);
+  Stroke(HUD_R,HUD_G,HUD_B,1);
+
+  draw_lat_lon  (td, getWidth(5), getHeight(15), 2.5);
   draw_home_dist(td, getWidth(50), getHeight(5),  3);
   draw_mode     (td, getWidth(90), getHeight(5),  3);
   //Translate(getWidth(50), getHeight(50));
   //Rotate(rot);
   //Translate(-getWidth(50), -getHeight(50));
 
-  render_rx_status(td,1);
   
+  if(display_rx_stats==1) render_rx_status(td,1);
   
-  Stroke(75,83,32,1);
+  Stroke(HUD_R,HUD_G,HUD_B,1);
   draw_center(td, getWidth(50), getHeight(50),    2);
 
 
@@ -458,9 +475,10 @@ void render_rx_status(telemetry_data_t *td, uint8_t embedded) {
   if(td->rx_status != NULL ) {
     int i;
     int ac = td->rx_status->wifi_adapter_cnt;
+    long duration = millis()-last_time_read;
+
     for(i=0; i<ac; ++i) {
 
-      long duration = millis()-last_time_read;
       if(duration > 1000){
 
         float new_damaged = (float)td->rx_status->adapter[i].wrong_crc_cnt - last_damaged_count[i];
@@ -473,29 +491,24 @@ void render_rx_status(telemetry_data_t *td, uint8_t embedded) {
 	last_damaged_count[i] = td->rx_status->adapter[i].wrong_crc_cnt;
 	last_total_count[i] = td->rx_status->adapter[i].received_packet_cnt;
 	last_time_read = millis();
-
       }
-
 
       StrokeWidth(0.6);
       if(td->packet_rate[i] != 0){
-	Stroke(0xff,0xff,0xff,1);
+        Stroke(HUD_R,HUD_G,HUD_B,1);
       } else {
 	Stroke(0xff,0x00,0x00,1);
       }
 
       sprintf(text, "c%d: %ddBm", i, td->signal_strength[i]);
-      Text(getWidth(50), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);
+      Text(getWidth(5), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);
       printf("%s\n",text);
 
       sprintf(text, "t%d: %.2f", i, td->packet_rate[i]);
-      Text(getWidth(65), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);
+      Text(getWidth(20), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);
 
       sprintf(text, "h%d: %0.2f", i, td->health_rate[i]);
-      Text(getWidth(80), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);			
-      
-      
-
+      Text(getWidth(35), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);			
     }
   }
   if(embedded==0){
