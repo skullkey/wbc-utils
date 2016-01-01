@@ -1,0 +1,15 @@
+[Unit]
+Description=Simple control for OSD
+After=getty@tty2.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/pi/mavlink/simple-control/watch_keys.sh
+StandardInput=tty
+TTYPath=/dev/tty2
+TTYReset=yes
+TTYVHangup=yes
+User=root
+
+[Install]
+WantedBy=default.target
