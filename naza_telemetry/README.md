@@ -10,8 +10,9 @@ NB! - The Raspberry Pi is 3.3V and the data from the NAZA GPS is 5V - do not con
 
 ==Build==
 To build on the pi:
-cd naza_telemetry
+cd wbc-utils
 git clone https://github.com/mavlink/c_library
+cd naza_telemetry
 make
 
 ==Details==
