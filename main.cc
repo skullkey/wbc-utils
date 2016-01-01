@@ -11,6 +11,7 @@ using namespace std;
 
 uint8_t buf[1];
 long lastsent=0;
+long lastcompass=0;
 mavlink_gps_raw_int_t packet_gps;
 mavlink_attitude_t packet_attitude;
 mavlink_global_position_int_t packet_global_pos;
@@ -43,7 +44,7 @@ int main(int argc, char *argv[]) {
     uint16_t len = 0;
 	uint8_t outbuf[MAVLINK_MAX_PACKET_LEN];
     lastsent = millis();
-
+    lastcompass = millis();
     for(;;) {
 		    int n = read(STDIN_FILENO, buf, sizeof(buf));
 
@@ -106,6 +107,7 @@ int main(int argc, char *argv[]) {
 
                 break;
               case NAZA_MESSAGE_COMPASS:
+                if(millis() - lastcompass > 200){
 				memset(&packet_attitude, 0, sizeof(packet_attitude));
             	packet_attitude.time_boot_ms = millis();
               	packet_attitude.roll = 0;
@@ -118,6 +120,8 @@ int main(int argc, char *argv[]) {
                 len = mavlink_msg_to_send_buffer(outbuf, &msga);
     	        fwrite(outbuf,1, len,stdout);
                 fflush(stdout);
+                lastcompass = millis();
+                }
                 break;
             }
 
