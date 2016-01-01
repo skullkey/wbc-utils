@@ -1,13 +1,22 @@
+<<<<<<< HEAD
 # Object files
 *.o
 *.ko
 *.obj
 *.elf
+=======
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+>>>>>>> 53976071211c15d6bcc3ca405d89a82e46c13185
 
 # Precompiled Headers
 *.gch
 *.pch
 
+<<<<<<< HEAD
 # Libraries
 *.lib
 *.a
@@ -19,11 +28,27 @@
 *.so
 *.so.*
 *.dylib
+=======
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+>>>>>>> 53976071211c15d6bcc3ca405d89a82e46c13185
 
 # Executables
 *.exe
 *.out
 *.app
+<<<<<<< HEAD
 *.i*86
 *.x86_64
 *.hex
@@ -33,3 +58,7 @@
 
 nazareader
 *.cc.save
+=======
+
+mavlink_omx_osd_SBS
+>>>>>>> 53976071211c15d6bcc3ca405d89a82e46c13185
