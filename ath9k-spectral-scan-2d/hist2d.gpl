@@ -1,0 +1,18 @@
+set terminal png size 600,400 background rgb "black"
+#set size square
+set title ''
+set xrange[2400:2500]
+set yrange[-90:0]
+set pm3d map
+unset colorbox
+set xtics textcolor rgb "white"
+set ytics textcolor rgb "white"
+#set palette defined (0 "white", 0.01 "blue", 0.02 "green", 0.03 "red")
+set tmargin at screen 1.0
+set bmargin at screen 0.1
+set rmargin at screen 1.0
+set lmargin at screen 0.1
+
+set output '/tmp/output.png'
+splot '/tmp/histogram.dat' notitle
+
