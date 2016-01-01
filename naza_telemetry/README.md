@@ -14,3 +14,5 @@ cd naza_telemetry
 git clone https://github.com/mavlink/c_library
 make
 
+==Details==
+setup.sh is useful to setup the UART during testing
