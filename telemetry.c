@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
-
+#include <sys/time.h>
 
 #include "telemetry.h"
 void telemetry_init(telemetry_data_t *td) {
@@ -17,7 +17,13 @@ void telemetry_init(telemetry_data_t *td) {
  td-> altitude=0;
  td-> latitude=0;
  td-> longitude=0;
+ 
 
+ td-> running_time=0;
+ td-> rx_time=0;
+ td-> tx_time=0;
+ td-> latency=0;
+ 
  td-> pitch=0;
  td-> roll=0;
  td-> heading=0;
@@ -48,6 +54,8 @@ void telemetry_init(telemetry_data_t *td) {
  td-> wp_target_bearing=0;
  td-> wp_dist=0;
  td-> wp_number=-1;
+
+ td->display_rx_stats=1;
  int i = 0;
  for(i=0;i<ADAPTER_MAX;i++){   
    td-> health_rate[i]=0;
@@ -83,4 +91,18 @@ wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(void) {
 
   return (wifibroadcast_rx_status_t*)retval;
 
+}
+
+
+long millis(){
+  struct timeval now;
+
+  long mtime, seconds, useconds;
+
+  gettimeofday(&now, NULL);
+
+  seconds  = now.tv_sec;
+  useconds = now.tv_usec;
+  mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+  return(mtime);
 }

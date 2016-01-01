@@ -250,9 +250,10 @@ printf("fix:%s\n", td->fix_mode);
             	td->satellites_visible = mavlink_msg_gps_raw_int_get_satellites_visible(&msg);
          	td->latitude = lng;
 		td->longitude = lat;
-		td->altitude = mavlink_msg_gps_raw_int_get_alt(&msg);
-		td->ground_speed = mavlink_msg_gps_raw_int_get_vel(&msg);		
-printf("lat:%f\n",lat);
+		td->altitude = mavlink_msg_gps_raw_int_get_alt(&msg)*0.001;
+		td->ground_speed = mavlink_msg_gps_raw_int_get_vel(&msg);
+
+	        printf("lat:%f\n",lat);
 printf("lon:%f\n",lng);
 // printf("alt:%f\n",td->altitude); 
           break;
@@ -281,6 +282,12 @@ printf("lon:%f\n",lng);
 
         case MAVLINK_MSG_ID_ATTITUDE:
           {
+	        td->running_time =  mavlink_msg_attitude_get_time_boot_ms(&msg);
+		printf("running time %lu",td->running_time);
+		if(td->tx_time==0) {
+		  td->tx_time=td->running_time;
+		  td->rx_time=millis();
+		}
 		printf("attitude\n");           
             	float heading = ToDeg(mavlink_msg_attitude_get_yaw(&msg));
          	td->heading = heading;

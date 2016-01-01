@@ -58,7 +58,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 uint8_t display_rx_stats=1;
 
-void handle_toggles(int fd){
+void handle_toggles(int fd, telemetry_data_t *td){
 
   char readbuf[10];
   memset(readbuf, 0, 10);
@@ -66,11 +66,18 @@ void handle_toggles(int fd){
 
   if(n>0){
     printf("Received string: %s\n", readbuf);
-    if(readbuf[0] == '0'){
-      display_rx_stats = 0;
-    } else {
-      display_rx_stats = 1;
+    if(readbuf[0] == 'd'){
+      if(td->display_rx_stats == 0) td->display_rx_stats = 1; else td->display_rx_stats=0;
+    } else if(readbuf[0]=='t') {
+      td->tx_time = td->running_time;
+      td->rx_time = millis();
+    } else if(readbuf[0]=='h') {
+      td->home_altitude = td->altitude;
+      td->home_latitude = td->latitude;
+      td->home_longitude = td->longitude;
     }
+
+    
   }
 
 }
@@ -106,7 +113,7 @@ int main(int argc, char *argv[]) {
 	telemetry_init(&td);
 
         for(;;) {
-          handle_toggles(fd);
+          handle_toggles(fd, &td);
 	  
 	  FD_ZERO(&set);
 	  FD_SET(STDIN_FILENO, &set);
@@ -128,13 +135,13 @@ int main(int argc, char *argv[]) {
 	    if(mavlink_parse_buffer(&td, buf, n)) {
 	      printf("mavlink parse ok\n");
 	      #ifdef RENDER
-	      render(&td, display_rx_stats);
+	      render(&td);
 	      #endif 
 	    }
 	  } else {
 	    printf("skipping\n");
 	    #ifdef RENDER
-	    render(&td, display_rx_stats);
+	    render(&td);
 	      //render_rx_status(&td,0);
 	    #endif  
 	  }

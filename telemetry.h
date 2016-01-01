@@ -27,6 +27,11 @@ typedef struct{
         uint8_t satellites_visible;
 	float altitude, latitude, longitude;
 
+	long running_time;
+	long rx_time;
+	long tx_time;
+	long latency;
+
 	float pitch, roll, heading;
 	float ground_speed, air_speed;
 	float climb_rate;
@@ -47,6 +52,9 @@ typedef struct{
 	float wp_target_bearing;
 	float wp_dist;
 	uint8_t wp_number; 
+
+	// rx health stats
+	uint8_t display_rx_stats;
 	float health_rate[ADAPTER_MAX];
 	float packet_rate[ADAPTER_MAX];
 	int8_t signal_strength[ADAPTER_MAX];
@@ -60,4 +68,4 @@ typedef struct{
 
 wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(void);
 void telemetry_init(telemetry_data_t *td);
-
+long millis();

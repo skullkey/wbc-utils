@@ -391,24 +391,16 @@ void draw_compass(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 }
 
 
-long millis(){
-  struct timeval now;
-
-  long mtime, seconds, useconds;
-
-  gettimeofday(&now, NULL);
-
-  seconds  = now.tv_sec;
-  useconds = now.tv_usec;
-  mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-  return(mtime);
-}
-
 
 
 uint32_t last_total_count[ADAPTER_MAX];
 uint32_t last_damaged_count[ADAPTER_MAX];
 long last_time_read;
+long last_latency_print=0;
+long max_latency=0;
+long latency=0;
+
+
 
 void render_init()
 {
@@ -421,11 +413,11 @@ void render_init()
     last_damaged_count[i] = 0;
   }
 
-
+  last_latency_print= millis();
 }
 
 
-void render(telemetry_data_t *td, uint8_t display_rx_stats) 
+void render(telemetry_data_t *td) 
 {
 
   Start(s_width, s_height);
@@ -452,7 +444,7 @@ void render(telemetry_data_t *td, uint8_t display_rx_stats)
   //Translate(-getWidth(50), -getHeight(50));
 
   
-  if(display_rx_stats==1) render_rx_status(td,1);
+  if(td->display_rx_stats==1) render_rx_status(td);
   
   Stroke(HUD_R,HUD_G,HUD_B,1);
   draw_center(td, getWidth(50), getHeight(50),    2);
@@ -463,13 +455,8 @@ void render(telemetry_data_t *td, uint8_t display_rx_stats)
 }
 
  
-void render_rx_status(telemetry_data_t *td, uint8_t embedded) {
+void render_rx_status(telemetry_data_t *td) {
   char text[256];
-
-  if(embedded==0){
-    Start(s_width, s_height);
-
-  }
 
   int i=0;
   if(td->rx_status != NULL ) {
@@ -508,11 +495,23 @@ void render_rx_status(telemetry_data_t *td, uint8_t embedded) {
       Text(getWidth(20), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);
 
       sprintf(text, "h%d: %0.2f", i, td->health_rate[i]);
-      Text(getWidth(35), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);			
+      Text(getWidth(35), getHeight(5+i*5), text, SerifTypeface, s_width/170*2.5);
+     
     }
   }
-  if(embedded==0){
-    End();                                             // End the picture
+  if(td->tx_time !=0){
+    sprintf(text, "l: %lu", latency);
+    Text(getWidth(65), getHeight(5), text, SerifTypeface, s_width/170*2.5);
+
+    td->latency =  (td->running_time - td->tx_time) - (millis() - td->rx_time);
+    if(td->latency > max_latency) {
+      max_latency = td->latency;
+    }
+    if(millis() - last_latency_print > 1000){
+      latency = max_latency;
+      max_latency = 0;
+      last_latency_print = millis();
+    }
   }
 }
 
