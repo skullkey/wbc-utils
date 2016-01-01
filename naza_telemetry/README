@@ -1,6 +1,0 @@
-To build on the pi:
-cd /home/pi
-git clone https://github.com/mavlink/c_library
-cd naza_telemetry
-make
-
