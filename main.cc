@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
 
                 break;
               case NAZA_MESSAGE_COMPASS:
-                if(millis() - lastcompass > 200){
+                if(millis() - lastcompass > 0){
 				memset(&packet_attitude, 0, sizeof(packet_attitude));
             	packet_attitude.time_boot_ms = millis();
               	packet_attitude.roll = 0;
