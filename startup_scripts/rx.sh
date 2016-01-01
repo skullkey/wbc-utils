@@ -11,7 +11,7 @@ SAVE_PATH="/media/usb0/video"
 #SAVE_PATH="/home/pi/sample.video"
 WBC_PATH="/home/pi/wifibroadcast"
 DISPLAY_PROGRAM="/opt/vc/src/hello_pi/hello_video/hello_video.bin" 
-FRSKY_OMX_OSD_PATH="/home/pi/mavlink/osd"
+FRSKY_OMX_OSD_PATH="/home/pi/wbc-utils/mavlink/osd"
 
 ##################################
 #change these only if you know what you are doing (and remember to change them on both sides)
@@ -52,7 +52,7 @@ if [ -d "$SAVE_PATH" ]; then
 	$WBC_PATH/rx -p $PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NICS | tee $FILE_NAME | $DISPLAY_PROGRAM
 else
 	echo "Starting without recording"
-        sleep 2 && $WBC_PATH/rx -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH -p $TELEMETRY_PORT $NIC | $FRSKY_OMX_OSD_PATH/mavlink_omx_osd_SBS $FRSKY_OMX_OSD_PATH &
+        sleep 2 && $WBC_PATH/rx -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH -p $TELEMETRY_PORT $NIC | $FRSKY_OMX_OSD_PATH/mavlink_omx_osd $FRSKY_OMX_OSD_PATH &
 	$WBC_PATH/rx -p $PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NICS | $DISPLAY_PROGRAM
 
 fi

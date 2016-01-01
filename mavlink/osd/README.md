@@ -23,11 +23,11 @@ Nobie used openvg (https://github.com/ajstarks/openvg) to render the osd.
 Follow the instructions here: https://github.com/ajstarks/openvg
 
 2. Get Mavlink c_library 
-cd mavlink /
+cd wbc-utils
 git clone https://github.com/mavlink/c_library 
 
 3. And Make
-cd osd/
+cd mavlink/osd/
 make
 
 

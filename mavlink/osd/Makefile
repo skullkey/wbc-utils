@@ -3,11 +3,11 @@
 VGFONTPATH=/opt/vc/src/hello_pi/libs/vgfont
 HELLOFONTPATH=/opt/vc/src/hello_pi/hello_font/
 
-CPPFLAGS+= -I/usr/include -I ../c_library/common/ -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -I$(VGFONTPATH)
+CPPFLAGS+= -I/usr/include -I ../../c_library/common/ -I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -I$(VGFONTPATH)
 LDFLAGS+= -L/usr/lib  -L$(VGFONTPATH) -lvgfont -lfreetype -lz
 LDFLAGS+=-L/opt/vc/lib/ -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -lpthread -lrt -lm -lshapes
 
-all: vgfont mavlink_omx_osd_SBS
+all: vgfont mavlink_omx_osd
 
 vgfont:
 	cp $(HELLOFONTPATH)/Vera.ttf .
