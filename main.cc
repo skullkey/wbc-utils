@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
             	packet_gps.time_usec = millis()*1000;
             	packet_gps.lat = NazaDecoder.getLat()*10000000.0f;;
             	packet_gps.lon = NazaDecoder.getLon()*10000000.0f;;
-            	packet_gps.alt = NazaDecoder.getGpsAlt()1000.0f;
+            	packet_gps.alt = NazaDecoder.getGpsAlt()*1000.0f;
             	packet_gps.fix_type = NazaDecoder.getFixType();
                 packet_gps.vel =  NazaDecoder.getSpeed();
                 packet_gps.satellites_visible = NazaDecoder.getNumSat();
