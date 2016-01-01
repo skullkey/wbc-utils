@@ -9,9 +9,9 @@ CHANNEL5G="149"
 
 WIDTH=1280
 HEIGHT=720
-FPS=48
+FPS=49
 BITRATE=4000000
-KEYFRAMERATE=48
+KEYFRAMERATE=8
 
 ##################################
 
@@ -64,9 +64,7 @@ prepare_nic $NIC
 /home/pi/wifibroadcast_fpv_scripts/telemetry.sh &
 
 echo "Starting tx for $NIC"
-raspivid -ih -t 0 -w $WIDTH -h $HEIGHT -fps $FPS -b $BITRATE -n -g $KEYFRAMERATE -pf high -o - | $WBC_PATH/tx -p $PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NIC
-#raspivid -t 0 -n -fps 49 -w 1296 -h 730 -b 3000000 -g 49 -ex sports --profile baseline -o - | $WBC_PATH/tx -p $PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NIC
-#>> /home/pi/tx.log 2>&1
+raspivid -ih -t 0 -w $WIDTH -h $HEIGHT -fps $FPS -b $BITRATE -n -g $KEYFRAMERATE -ex sports -awb horizon  -pf high  -o - | $WBC_PATH/tx -p $PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NIC
 
 killall raspivid
 killall tx
