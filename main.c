@@ -35,13 +35,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/select.h>
 
 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
-
 #include <linux/stat.h>
 #include <string.h>
 
@@ -69,8 +62,8 @@ void handle_toggles(int fd, telemetry_data_t *td){
     if(readbuf[0] == 'd'){
       if(td->display_rx_stats == 0) td->display_rx_stats = 1; else td->display_rx_stats=0;
     } else if(readbuf[0]=='t') {
-      td->tx_time = td->running_time;
-      td->rx_time = millis();
+      reset_tx_time(td);
+
     } else if(readbuf[0]=='h') {
       td->home_altitude = td->altitude;
       td->home_latitude = td->latitude;

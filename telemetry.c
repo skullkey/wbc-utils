@@ -1,3 +1,4 @@
+
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
@@ -6,6 +7,10 @@
 #include <stdlib.h>
 #include <string.h> 
 #include <sys/time.h>
+
+#include <inttypes.h>
+#include <math.h>
+#include <time.h>
 
 #include "telemetry.h"
 void telemetry_init(telemetry_data_t *td) {
@@ -23,6 +28,10 @@ void telemetry_init(telemetry_data_t *td) {
  td-> rx_time=0;
  td-> tx_time=0;
  td-> latency=0;
+ td-> tx_time_set=0;
+ td-> tx_time_counter=0;
+ td-> tx_time_delta=0;
+ td-> avg_latency=0;
  
  td-> pitch=0;
  td-> roll=0;
@@ -94,6 +103,45 @@ wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(void) {
 }
 
 
+void reset_tx_time(telemetry_data_t *td){
+  td->tx_time_set=0;
+  td->tx_time_counter=0;
+  td->tx_time_delta=0;
+  td->latency=0;
+  td->avg_latency=0;
+}
+
+void set_tx_time(telemetry_data_t *td) {
+  if(td->tx_time_set==0){
+    if(td->tx_time_counter<100){
+      td->tx_time_counter++;
+      td->tx_time_delta += millis() - td->running_time;
+    }
+    if(td->tx_time_counter==100){
+      td->tx_time_delta /= 100;
+      printf("Running timedelta=%d\n",td->tx_time_delta);
+      td->tx_time = millis() - td->tx_time_delta;
+      td->rx_time = millis();
+      td->tx_time_set=1;
+    }
+
+  }
+  
+
+}
+
+
+void calc_latency(telemetry_data_t *td){
+  set_tx_time(td);
+
+  if(td->tx_time_set==1){
+    td->latency =  (td->running_time - td->tx_time) - (millis() - td->rx_time);
+    td->avg_latency = td->avg_latency * (1-LATENCY_ALPHA) + LATENCY_ALPHA * td->latency;
+    printf("Running %lu millis %lu tx %lu rx %lu lat %d\n",td->running_time, millis(), td->tx_time, td->rx_time, td->latency);
+  }
+};
+
+/*
 long millis(){
   struct timeval now;
 
@@ -106,3 +154,29 @@ long millis(){
   mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
   return(mtime);
 }
+*/
+/*long millis (void)
+{
+  struct timeval tv ;
+  long now ;
+
+  gettimeofday (&tv, NULL) ;
+  now  = (long)tv.tv_sec * (long)1000 + (long)(tv.tv_usec / 1000) ;
+
+  return now ;
+  }*/
+long millis(void){
+
+  long            ms; // Milliseconds
+  time_t          s;  // Seconds
+  struct timespec spec;
+
+  clock_gettime(CLOCK_REALTIME, &spec);
+
+  s  = spec.tv_sec;
+  ms = (long)(spec.tv_sec * 1000) + (long)(spec.tv_nsec / 1.0e6);
+    //round(spec.tv_nsec / 1.0e6); // Convert nanoseconds to milliseconds
+
+  return(ms);
+}  
+

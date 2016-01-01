@@ -397,8 +397,9 @@ uint32_t last_total_count[ADAPTER_MAX];
 uint32_t last_damaged_count[ADAPTER_MAX];
 long last_time_read;
 long last_latency_print=0;
-long max_latency=0;
-long latency=0;
+int cnt_latency=0;
+float sum_latency=0;
+float latency=0;
 
 
 
@@ -500,16 +501,16 @@ void render_rx_status(telemetry_data_t *td) {
     }
   }
   if(td->tx_time !=0){
-    sprintf(text, "l: %lu", latency);
+    sprintf(text, "l: %.1f",td->avg_latency);
     Text(getWidth(65), getHeight(5), text, SerifTypeface, s_width/170*2.5);
 
-    td->latency =  (td->running_time - td->tx_time) - (millis() - td->rx_time);
-    if(td->latency > max_latency) {
-      max_latency = td->latency;
-    }
-    if(millis() - last_latency_print > 1000){
-      latency = max_latency;
-      max_latency = 0;
+    
+    sum_latency += td->latency;
+    cnt_latency ++;
+    if(millis() - last_latency_print > 1000 && cnt_latency>100){
+      latency = sum_latency/cnt_latency;
+      cnt_latency = 0;
+      sum_latency = 0;
       last_latency_print = millis();
     }
   }

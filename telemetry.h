@@ -4,6 +4,8 @@
 
 #pragma once
 
+#define LATENCY_ALPHA 0.0001
+
 typedef struct {
         uint32_t received_packet_cnt;
         uint32_t wrong_crc_cnt;
@@ -30,7 +32,12 @@ typedef struct{
 	long running_time;
 	long rx_time;
 	long tx_time;
-	long latency;
+	int tx_time_delta;
+	uint8_t tx_time_set;
+	uint8_t tx_time_counter;
+	int latency;
+	float avg_latency;
+
 
 	float pitch, roll, heading;
 	float ground_speed, air_speed;
@@ -69,3 +76,6 @@ typedef struct{
 wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(void);
 void telemetry_init(telemetry_data_t *td);
 long millis();
+void set_tx_time(telemetry_data_t *td);
+void reset_tx_time(telemetry_data_t *td);
+void calc_latency(telemetry_data_t *td);

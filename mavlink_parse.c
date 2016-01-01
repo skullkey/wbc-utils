@@ -283,11 +283,9 @@ printf("lon:%f\n",lng);
         case MAVLINK_MSG_ID_ATTITUDE:
           {
 	        td->running_time =  mavlink_msg_attitude_get_time_boot_ms(&msg);
-		printf("running time %lu",td->running_time);
-		if(td->tx_time==0) {
-		  td->tx_time=td->running_time;
-		  td->rx_time=millis();
-		}
+		printf("running time %lu millis %lu\n",td->running_time,millis());
+
+		calc_latency(td);
 		printf("attitude\n");           
             	float heading = ToDeg(mavlink_msg_attitude_get_yaw(&msg));
          	td->heading = heading;
