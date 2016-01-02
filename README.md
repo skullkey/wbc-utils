@@ -23,6 +23,8 @@ You will need to build a cable for the Naza as described on the site.  However n
  
 RX
 --
+[![Mavlink OSD by Nobie in action](http://img.youtube.com/vi/EQ01b3aJ-rk/0.jpg)](http://www.youtube.com/watch?v=EQ01b3aJ-rk)
+
 1. Mavlink  OSD - displays mavlink telemetry and rx status during flight.  Based on a [dropbox link](https://www.dropbox.com/s/1ehq0ytun5ns6no/osd.zip?dl=0) shared by Nobie (on the [wifibroadcast blog](https://befinitiv.wordpress.com/2015/07/06/telemetry-osd-for-wifibroadcast/)) 
 2. Ath9k based spectral scan - displays a 2d histogram of frequency usage.  The idea is to "see" how noisy the frequency spectrum is before launching.  Uses the [ath9k-spectral-scan utility](https://github.com/kazikcz/ath9k-spectral-scan) developed by Michał Kazior to draw a 2d histogram with gnuplot.
 3. Simple-Control service - Ability to toggle display options and switch between the osd and scanner display. Instead of a full sized keyboard, an Arduino simulated keyboard can also be used. 
