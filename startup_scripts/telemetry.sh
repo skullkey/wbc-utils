@@ -40,7 +40,7 @@ stty -F /dev/ttyAMA0 -imaxbel -opost -isig -icanon -echo -echoe -ixoff -ixon 115
 while :
 do
 	echo "Starting tx for $NIC for telemetry"
-	cat /dev/ttyAMA0 | $NAZA_PATH/nazareader  | $WBC_PATH/tx -p $OSD_PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NIC
+	cat /dev/ttyAMA0   | $WBC_PATH/tx -p $OSD_PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NIC
 	killall cat
         ps -ef | grep "tx -p $OSD_PORT" | grep -v grep | awk '{print $1}' | xargs kill -9
 done
