@@ -251,12 +251,12 @@ void draw_power(telemetry_data_t *td, int pos_x, int pos_y, float scale)
 {
   char s[100];
   float space = 15 * scale;
-  sprintf(s, "%3.1fV", td->voltage);
+  sprintf(s, "Bat %3.1fV", td->voltage);
   Text(pos_x, pos_y, s, SerifTypeface, s_width/170 * scale);
   
-  sprintf(s, "%3.2fA", td->current);
+  //sprintf(s, "%3.2fA", td->current);
   
-  Text(pos_x, pos_y + space, s, SerifTypeface, s_width/170 * scale);
+  // Text(pos_x, pos_y + space, s, SerifTypeface, s_width/170 * scale);
 
 }
 void draw_home_dist(telemetry_data_t *td, int pos_x, int pos_y, float scale)
@@ -430,7 +430,7 @@ void render(telemetry_data_t *td)
   Stroke(HUD_R,HUD_G,HUD_B,1);
   StrokeWidth(2);
   draw_compass  (td, getWidth(50), getHeight(85), 1.5);
-  //draw_power    (td, getWidth(20), getHeight(5),  2);
+  draw_power    (td, getWidth(5), getHeight(90),  3);
   draw_sat      (td, getWidth(90), getHeight(90), 3);
 	
 
