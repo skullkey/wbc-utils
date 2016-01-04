@@ -1,0 +1,38 @@
+NazaDecoder library changelog
+------------------------------
+Version 20141130
+  [FIX] added msgLen checking to protect against exceeding the message buffer (which could cause the decoder to stop working properly)
+  [FIX] changed the name of the message buffer from gpsPayload to payload as it is not only GPS related (cosmetic change)
+
+Version 20141109
+  [NEW] added a define (ATTITUDE_SENSING_DISABLED) that allows disabling attitude (pitch/roll) sensing. This may be useful when you experience a conflict with another library that also uses the interrupt or on a board that does not support the interrupt used.
+  [NEW] attitude sensing is by default disabled for Teensy boards
+
+Version 20140921
+  [FIX] fixed inverted east/west heading
+
+Version 20140628
+  [NEW] added Vertical Speed Indicator (a.k.a. climb speed) and vdop
+  [NEW] speed is now reported in m/s instead of knots
+  [FIX] Corrected decoding of day number (note that for time between 16:00 and 23:59 the hour returned from GPS module is actually 00:00 - 7:59).
+  [NEW] aligned function names with NazaCanDecoder library (getAlt -> getGpsAlt, getVsi -> getGpsVsi, getHeading ->getHeadingNc) and updated the examples
+
+Version 20140123
+  [NEW] added in-flight compass calibration. Do a full 360 degrees yaw while flying to calculate the calibration data.
+
+Version 20140118
+  [NEW] added date and time
+  [FIX] corrected decoding of compass heading
+
+Version 20131230
+  [NEW] added checksum checking to reject invalid data from GPS
+  [NEW] added course over ground and hdop
+  [NEW] added DGPS fix and fix type enum
+  [FIX] removed unused motorsArmed method from header
+  [FIX] corrected keywords file
+
+Version 20131010
+  [FIX] corrected decoding of the fix type field (was not XORed with mask)
+
+Version 20131009
+  initial version of the library
