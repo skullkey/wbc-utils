@@ -2,7 +2,8 @@
 
 sleep 5
 chvt 2
-cd /home/pi/wbc-utils/mavlink/simple-control
+SIMPLE_PATH=/home/pi/wbc-utils/mavlink/simple-control
+cd $SIMPLE_PATH
 
 function clearfb {
            dd if=/dev/zero of=/dev/fb0 &> /dev/null
@@ -11,7 +12,7 @@ function clearfb {
 function killall {
     systemctl stop wbcrxd
     pkill ss2d
-    cd /home/pi/wbc-utils/mavlink/simple-control
+    cd $SIMPLE_PATH
     clearfb
 }
 

@@ -4,7 +4,7 @@ After=getty@tty2.service
 
 [Service]
 Type=oneshot
-ExecStart=/home/pi/mavlink/simple-control/watch_keys.sh
+ExecStart=/home/pi/wbc-utils/mavlink/simple-control/watch_keys.sh
 StandardInput=tty
 TTYPath=/dev/tty2
 TTYReset=yes

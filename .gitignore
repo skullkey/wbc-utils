@@ -54,5 +54,6 @@
 nazareader
 *.cc.save
 
-mavlink_omx_osd_SBS
 c_library
+ath9k-spectral-scan-2d/ath9k-spectral-scan/
+mavlink/osd/mavlink_omx_osd
