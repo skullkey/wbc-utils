@@ -10,7 +10,7 @@ CHANNEL5G="149"
 WIDTH=1280
 HEIGHT=720
 FPS=49
-BITRATE=4000000
+BITRATE=3000000
 KEYFRAMERATE=8
 
 ##################################
@@ -20,7 +20,7 @@ BLOCK_SIZE=8
 FECS=4
 PACKET_LENGTH=1024
 PORT=0
-
+TELEMETRY_PORT=1
 ##################################
 
 WBC_PATH="/home/pi/wifibroadcast"
@@ -61,10 +61,15 @@ sleep 2
 
 prepare_nic $NIC
 
-/home/pi/wifibroadcast_fpv_scripts/telemetry.sh &
 
 echo "Starting tx for $NIC"
-raspivid -ih -t 0 -w $WIDTH -h $HEIGHT -fps $FPS -b $BITRATE -n -g $KEYFRAMERATE -ex sports -awb horizon  -pf high  -o - | $WBC_PATH/tx -p $PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NIC
+#raspivid -ih -t 0 -w $WIDTH -h $HEIGHT -fps $FPS -b $BITRATE -n -g $KEYFRAMERATE -ex sports -awb horizon  -pf high  -o - | $WBC_PATH/tx -p $PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH $NIC
 
+#$WBC_PATH/tx -p $PORT -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH -m 64 -s 2  $NIC &
+#/home/pi/wifibroadcast_fpv_scripts/telemetry.sh &
+stty -F /dev/ttyAMA0 -imaxbel -opost -isig -icanon -echo -echoe -ixoff -ixon 115200
+cat /dev/ttyAMA0 | $WBC_PATH/tx -p $TELEMETRY_PORT  -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH  $NIC  &
+raspivid -ih -t 0 -w $WIDTH -h $HEIGHT -fps $FPS -b $BITRATE -n -g $KEYFRAMERATE -ex sports -awb horizon  -pf high  -o - | $WBC_PATH/tx -p $PORT  -b $BLOCK_SIZE -r $FECS -f $PACKET_LENGTH  $NIC  
+killall cat
 killall raspivid
 killall tx
