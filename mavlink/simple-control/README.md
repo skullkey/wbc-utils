@@ -1,8 +1,10 @@
-==What is this==
+What is this
+===========
 A systemd service file and bash script that starts on tty2 on boot and allows the user to toggle some of the OSD features
 
-==How to use==
-Copy the simple-control.service file to install 
+How to use
+==========
+Copy the simple-control.service file to install
 sudo cp simple-control.service /etc/systemd/system/
 
 And enable it

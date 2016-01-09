@@ -1,0 +1,22 @@
+--- backports-4.1.1-1_unmodded/drivers/net/wireless/ath/regd.c	2015-07-01 23:10:37.000000000 +0200
++++ backports-4.1.1-1/drivers/net/wireless/ath/regd.c	2015-08-31 18:25:57.071349263 +0200
+@@ -33,14 +33,12 @@
+  */
+ 
+ /* Only these channels all allow active scan on all world regulatory domains */
+-#define ATH9K_2GHZ_CH01_11	REG_RULE(2412-10, 2462+10, 40, 0, 20, 0)
+-
++#define ATH9K_2GHZ_CH01_11     REG_RULE(2312-10, 2462+10, 40, 0, 30, 0)
+ /* We enable active scan on these a case by case basis by regulatory domain */
+-#define ATH9K_2GHZ_CH12_13	REG_RULE(2467-10, 2472+10, 40, 0, 20,\
+-					 NL80211_RRF_NO_IR)
+-#define ATH9K_2GHZ_CH14		REG_RULE(2484-10, 2484+10, 40, 0, 20,\
+-					 NL80211_RRF_NO_IR | \
+-					 NL80211_RRF_NO_OFDM)
++#define ATH9K_2GHZ_CH12_13     REG_RULE(2467-10, 2472+10, 40, 0, 30,\
++                                        NL80211_RRF_PASSIVE_SCAN)
++#define ATH9K_2GHZ_CH14         REG_RULE(2484-10, 2484+10, 40, 0, 30,\
++                                	NL80211_RRF_PASSIVE_SCAN | NL80211_RRF_NO_OFDM)
+ 
+ /* We allow IBSS on these on a case by case basis by regulatory domain */
+ #define ATH9K_5GHZ_5150_5350	REG_RULE(5150-10, 5350+10, 80, 0, 30,\

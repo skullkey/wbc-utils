@@ -1,0 +1,10 @@
+--- backports-4.1.1-1_unmodded/net/wireless/util.c	2015-07-01 23:10:37.000000000 +0200
++++ backports-4.1.1-1/net/wireless/util.c	2015-08-31 18:32:34.155365726 +0200
+@@ -73,6 +73,7 @@
+ 		return 0; /* not supported */
+ 	switch (band) {
+ 	case IEEE80211_BAND_2GHZ:
++		chan = (int)(char)chan;
+ 		if (chan == 14)
+ 			return 2484;
+ 		else if (chan < 14)

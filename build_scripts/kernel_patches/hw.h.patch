@@ -1,0 +1,11 @@
+--- backports-4.1.1-1_unmodded/drivers/net/wireless/ath/ath9k/hw.h	2015-07-01 23:10:37.000000000 +0200
++++ backports-4.1.1-1/drivers/net/wireless/ath/ath9k/hw.h	2015-08-31 18:58:21.991429895 +0200
+@@ -73,7 +73,7 @@
+ 
+ #define ATH9K_RSSI_BAD			-128
+ 
+-#define ATH9K_NUM_CHANNELS	38
++#define ATH9K_NUM_CHANNELS	58
+ 
+ /* Register read/write primitives */
+ #define REG_WRITE(_ah, _reg, _val) \
