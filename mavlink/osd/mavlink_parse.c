@@ -22,31 +22,33 @@ void setHomeVars(telemetry_data_t *td)
   long bearing;
  
   if(td->home_location_set == 0 && td->fix_type == 3){
-printf("set home\n");
+    printf("set home\n");
     td->home_latitude = td->latitude;
     td->home_longitude = td->longitude;
     td->home_altitude = td->altitude;
     
     td->home_location_set = 1;
-printf("osd_home_lat:%f\n",td->home_latitude);
-printf("osd_home_lon:%f\n",td->home_longitude);
+    printf("osd_home_lat:%f\n",td->home_latitude);
+    printf("osd_home_lon:%f\n",td->home_longitude);
 
   }
   else if(td->home_location_set == 1 && td->home_altitude_set ==0){
-  // JRChange: osd_home_alt: check for stable osd_alt (must be stable for 25*120ms = 3s)
+    // JRChange: osd_home_alt: check for stable osd_alt (must be stable for 25*120ms = 3s)
     if(td->home_altitude_counter < 25){
       if(fabs(td->home_last_altitude - td->altitude) > 0.5){
         td->home_altitude_counter = 0;
         td->home_last_altitude = td->altitude;
       }
       else
-      {
-        if(++td->home_altitude_counter >= 25){
-          td->home_altitude = td->altitude;  // take this stable osd_alt as osd_home_alt
-          td->home_altitude_set = 1;
-        }
-      }
+	{
+	  if(++td->home_altitude_counter >= 25){
+	    td->home_altitude = td->altitude;  // take this stable osd_alt as osd_home_alt
+	    td->home_altitude_set = 1;
+	  }
+	}
     }
+  }
+  else if(td->home_location_set == 1 && td->home_altitude_set ==1){  
     // shrinking factor for longitude going to poles direction
     float rads = fabs(td->home_latitude) * 0.0174532925;
     double scaleLongDown = cos(rads);
@@ -56,10 +58,10 @@ printf("osd_home_lon:%f\n",td->home_longitude);
     dstlat = fabs(td->home_latitude - td->latitude) * 111319.5;
     dstlon = fabs(td->home_longitude - td->longitude) * 111319.5 * scaleLongDown;
     td->home_distance = sqrt(pow(dstlat,2) + pow(dstlon,2));
-  printf("home_dist:%f\n",td->home_distance);
+    printf("home_dist:%f\n",td->home_distance);
 
-//printf("dstlat:%f\n",dstlat);
-//printf("dstlon:%f\n",dstlon);
+    //printf("dstlat:%f\n",dstlat);
+    //printf("dstlon:%f\n",dstlon);
 
 
 
@@ -78,7 +80,7 @@ printf("osd_home_lon:%f\n",td->home_longitude);
     /*round((float)(bearing/360.0f) * 16.0f) + 1;//array of arrows =)
  
       if(td->osd_home_direction > 16) td->osd_home_direction = 0;*/
-printf("home_direction:%f\n",td->home_direction);
+    printf("home_direction:%f\n",td->home_direction);
 
   }
 } 
@@ -285,7 +287,7 @@ printf("lon:%f\n",lng);
 	        td->running_time =  mavlink_msg_attitude_get_time_boot_ms(&msg);
 		printf("running time %lu millis %lu\n",td->running_time,millis());
 
-		calc_latency(td);
+		//calc_latency(td);
 		printf("attitude\n");           
             	float heading = ToDeg(mavlink_msg_attitude_get_yaw(&msg));
          	td->heading = heading;
@@ -301,6 +303,7 @@ printf("lon:%f\n",lng);
 		}
           break;
 
+	  
         default:
 	{
 	  printf("unknown mavlink msgid:%d\n",msg.msgid);

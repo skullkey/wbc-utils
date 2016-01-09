@@ -67,13 +67,14 @@ typedef struct{
 	int8_t signal_strength[ADAPTER_MAX];
 	
 	wifibroadcast_rx_status_t *rx_status;
+
 	
 
 
 } telemetry_data_t;
 
 
-wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(void);
+wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(uint8_t port);
 void telemetry_init(telemetry_data_t *td);
 long millis();
 void set_tx_time(telemetry_data_t *td);

@@ -73,13 +73,17 @@ void telemetry_init(telemetry_data_t *td) {
  }	
 
 
-  td->rx_status = telemetry_wbc_status_memory_open();
+  td->rx_status = telemetry_wbc_status_memory_open(0);
+  
+  
 }
 
 
 
-wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(void) {
-  int fd = shm_open("/wifibroadcast_rx_status_0", O_RDWR, S_IRUSR | S_IWUSR);
+wifibroadcast_rx_status_t *telemetry_wbc_status_memory_open(uint8_t port) {
+  char s[100];
+  sprintf(s, "/wifibroadcast_rx_status_%d",port);
+  int fd = shm_open(s, O_RDWR, S_IRUSR | S_IWUSR);
 
   if(fd < 0) {
     fprintf(stderr, "Could not open wifibroadcast rx status\n");
