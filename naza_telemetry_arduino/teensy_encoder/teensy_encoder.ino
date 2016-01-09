@@ -10,6 +10,7 @@ SoftwareSerial mySerial(3,2); // RX, TX
 #define VOLTAGEPIN A2
 #define VOLT_DIVIDER_CONST 0.28
 #define SERIAL mySerial
+#define DEBUG Serial
 
 long lastheartbeat=0;
 long lastcompass=0;
@@ -27,6 +28,7 @@ uint16_t len;
 void setup(){
 
   SERIAL.begin(115200);
+  DEBUG.begin(115200);
   Serial1.begin(115200);
   pinMode(PITCHPIN, INPUT_PULLUP);  
   pinMode(ROLLPIN, INPUT_PULLUP); 
@@ -112,6 +114,7 @@ void loop(){
                 SERIAL.flush();
 
                 lastcompass = millis();
+                DEBUG.println(NazaDecoder_getRoll());
 
    }
    
