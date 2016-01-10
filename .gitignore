@@ -51,12 +51,14 @@
 # Debug files
 *.dSYM/
 
+
 nazareader
 *.cc.save
 
 c_library
 ath9k-spectral-scan-2d/ath9k-spectral-scan/
 mavlink/osd/mavlink_omx_osd
+openvg
 
 \#*\#
 .\#*
