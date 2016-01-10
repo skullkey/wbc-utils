@@ -8,8 +8,8 @@ Prerequisites
 dd if=2015-09-24-raspbian-jessie_2016-01-09.img of=/dev/mmcXXX bs=8M
 where /dev/mmcXXX correspond to the /dev entry for your SD card - not the partition, i.e. not /dev/mmcXXXp1
 3. Mount the SD card
-mkdir mnt/fat32
-mkdir mnt/ext4
+mkdir -p mnt/fat32
+mkdir -p mnt/ext4
 sudo mount /dev/mmcXXXp1 mnt/fat32
 sudo mount /dev/mmcXXXp2 mnt/ext4
 
@@ -21,8 +21,6 @@ It is possible to compile the kernel on the PI, however the steps below assume c
 1. Install build essentials
 sudo apt-get update
 sudo apt-get install -y  git-core gnupg flex bison gperf libesd0-dev build-essential zip curl libncurses5-dev zlib1g-dev gcc-multilib g++-multilib
-sudo dpkg --add-architecture i386
-sudo apt-get update
 sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0 lib32stdc++6
 
 2.  Clone this repo
@@ -34,7 +32,7 @@ git clone https://github.com/skullkey/wbc-utils.git
 git clone https://github.com/raspberrypi/tools
 
 4. Update the path
-export PATH=$PATH:tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
+export PATH=$PATH:`pwd`/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
 
 5. Get the latest kernel source
 git clone --depth=1 https://github.com/raspberrypi/linux
@@ -45,7 +43,7 @@ A typical folder structure for the kernel patching, configuring and building wou
 ~/stuff/wbc-utils
 ~/stuff/linux
 ~/stuff/tools
-
+~/stuff/mnt
 
 
 Patch the kernel for 30dBm output and 2.3-2.4 GHz (optional)
@@ -56,7 +54,12 @@ If you are unsure about the legality or whether your device will be able to surv
 
 1. Patch the latest kernel source with patches from the wbc-utils/build_scripts/kernel_patches folder
 cd linux
-cat ../wbc-utils/build_scripts/kernel_patches/*|patch --verbose -p1
+patch --verbose -p1 < ../wbc-utils/build_scripts/kernel_patches/common-init.c.patch
+patch --verbose -p1 < ../wbc-utils/build_scripts/kernel_patches/hw.h.patch
+patch --verbose -p1 < ../wbc-utils/build_scripts/kernel_patches/regd.c.patch
+patch --verbose -p1 < ../wbc-utils/build_scripts/kernel_patches/util.c.patch
+patch --verbose -p1 < ../wbc-utils/build_scripts/kernel_patches/fixed_channel_power_of_ath9k_to_20dbm.patch
+cd ..
 
 Configure & build the kernel
 --------------------
@@ -64,24 +67,25 @@ Configure & build the kernel
 cd linux
 KERNEL=kernel
 cp ../wbc-utils/build_scripts/bcmrpi.config.with.ath9k.debugging .config
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- old_config
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- oldconfig
 
 2. For Pi 2:
 cd linux
 KERNEL=kernel7
 cp ../wbc-utils/build_scripts/bcm2709.config.with.ath9k-debugging .config
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- old_config
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- oldconfig
 
 3. Then for both:
-make -j16 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage modules dtbs
+make -j32 ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- zImage modules dtbs
 
 4. Install onto the SD card
-sudo make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=mnt/ext4 modules_install
-sudo cp mnt/fat32/$KERNEL.img mnt/fat32/$KERNEL-backup.img
-sudo scripts/mkknlimg arch/arm/boot/zImage mnt/fat32/$KERNEL.img
-sudo cp arch/arm/boot/dts/*.dtb mnt/fat32/
-sudo cp arch/arm/boot/dts/overlays/*.dtb* mnt/fat32/overlays/
-sudo cp arch/arm/boot/dts/overlays/README mnt/fat32/overlays/
+sudo make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH=../mnt/ext4 modules_install
+sudo scripts/mkknlimg arch/arm/boot/zImage ../mnt/fat32/$KERNEL.img
+sudo cp arch/arm/boot/dts/*.dtb ../mnt/fat32/
+test ! -e ../mnt/fat32/overlays && mkdir ../mnt/fat32/overlays/
+sudo cp arch/arm/boot/dts/overlays/*.dtb* ../mnt/fat32/overlays/
+sudo cp arch/arm/boot/dts/overlays/README ../mnt/fat32/overlays/
+cd ..
 
 
 Copy the install script onto the SD Card

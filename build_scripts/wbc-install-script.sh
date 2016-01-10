@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+sudo apt-get update
 
 #install wbc-utils
 cd /home/pi
@@ -12,7 +13,7 @@ cd wbc-utils/ath9k-spectral-scan-2d
 git clone https://github.com/kazikcz/ath9k-spectral-scan
 cd ath9k-spectral-scan
 make
-
+sudo apt-get -y install gnuplot-nox fbi
 
 #patch hello_video - adds the alarm SIGNAL to make sure it gets killed when freezing
 cd /home/pi
@@ -57,7 +58,6 @@ sudo systemctl enable simple-control.service
 cd /home/pi
 cd wifibroadcast_fpv_scripts/
 mv tx.sh tx.sh.orig
-cd wifibroadcast_fpv_scripts/
 mv rx.sh rx.sh.orig
 
 # install new startup scripts
