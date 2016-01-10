@@ -4,18 +4,19 @@ ifconfig wlan0 down
 iwconfig wlan0 mode managed
 ifconfig wlan0 up
 
+rm /tmp/histogram.dat
 
 while true
 do
                 touch /tmp/fft.dump.all
-		echo chanscan \
-			| tee /sys/kernel/debug/ieee80211/phy*/ath9k_htc/spectral_scan_ctl \
-			>/dev/null
-		iw wlan0 scan    >/dev/null
+                echo chanscan \
+                        | tee /sys/kernel/debug/ieee80211/phy*/ath9k_htc/spectral_scan_ctl \
+                        >/dev/null
+                iw wlan0 scan    >/dev/null
 
-		cat /sys/kernel/debug/ieee80211/phy*/ath9k_htc/spectral_scan0 | ./ath9k-spectral-scan/fft2txt | awk '{print $4 " " $6}' > /tmp/fft.dump.all
+                cat /sys/kernel/debug/ieee80211/phy*/ath9k_htc/spectral_scan0 | ./ath9k-spectral-scan/fft2txt | awk '{print $4 " " $6}' > /tmp/fft.dump.all
                 python hist2d.py
                 gnuplot hist2d.gpl
-		fbi -noverbose  -T 2 /tmp/output.png
+                pkill fbi
+                fbi -noverbose  -T 2 --noedit -a /tmp/output.png & pid=$!
 done
-
