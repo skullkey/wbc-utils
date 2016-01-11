@@ -6,7 +6,8 @@ SIMPLE_PATH=/home/pi/wbc-utils/mavlink/simple-control
 cd $SIMPLE_PATH
 
 function clearfb {
-           dd if=/dev/zero of=/dev/fb0 &> /dev/null
+    dd if=/dev/zero of=/dev/fb0 &> /dev/null
+    printf "\033c"
 }
 
 function killall {
