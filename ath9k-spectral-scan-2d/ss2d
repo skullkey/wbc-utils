@@ -1,10 +1,24 @@
-#!/bin/sh
+#!/bin/bash
+
+printf "\033c"
 
 ifconfig wlan0 down
 iwconfig wlan0 mode managed
 ifconfig wlan0 up
 
-rm /tmp/histogram.dat
+cp test_pattern.png /tmp/output.png
+fbi -noverbose -T 2 --noedit -a  /tmp/output.png   > /dev/null 2>&1
+
+function finish {
+  rm /tmp/histogram.dat
+  rm /tmp/output.png
+
+  pkill fbi
+  
+}
+trap finish EXIT
+
+
 
 while true
 do
@@ -15,8 +29,9 @@ do
                 iw wlan0 scan    >/dev/null
 
                 cat /sys/kernel/debug/ieee80211/phy*/ath9k_htc/spectral_scan0 | ./ath9k-spectral-scan/fft2txt | awk '{print $4 " " $6}' > /tmp/fft.dump.all
-                python hist2d.py
-                gnuplot hist2d.gpl
+                python hist2d.py > /dev/null
+                gnuplot hist2d.gpl > /dev/null
                 pkill fbi
-                fbi -noverbose  -T 2 --noedit -a /tmp/output.png & pid=$!
+                fbi -noverbose  -T 2   --noedit -a  /tmp/output.png >/dev/null 2>&1
+
 done

@@ -26,7 +26,7 @@ sudo ./rebuild.sh
 cd /home/pi
 cd wbc-utils
 sudo apt-get -y install libjpeg8-dev indent libfreetype6-dev ttf-dejavu-core
-git clone git://github.com/ajstarks/openvg
+git clone https://github.com/SamuelBrucksch/openvg
 cd openvg
 make
 make library
