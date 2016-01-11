@@ -2,7 +2,7 @@ sudo su
 
 # Build essentials
 #apt-get -y install build-essential linux-headers-rpi-rpfv libpcap-dev python-m2crypto libnl-dev libgcrypt11-dev
-apt-get -y install python-m2crypto
+apt-get -y install python-m2crypto libnl-dev libgcrypt11-dev
 
 #Sources
 cd /home/pi
@@ -19,9 +19,11 @@ tar xvf iw-3.10.tar.xz
 cd /home/pi
 cd src/wireless-regdb-2015.04.06
 mv db.txt db.txt.orig
-cp /home/pi/wbc-utils/build_scripts/db.CN.txt db.txt
+cp /home/pi/wbc-utils/build_scripts/db.patched.txt db.txt
 
 # make regulatory.bin
+make clean
+make uninstall
 make
 ./db2bin.py regulatory.bin db.txt ~/.wireless-regdb-root.key.priv.pem
 make install
@@ -37,6 +39,7 @@ make install
 cd /home/pi
 cd src/iw-3.10
 make
+make install
 
 #reboot and test
 sudo reboot
