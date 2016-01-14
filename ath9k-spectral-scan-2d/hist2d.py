@@ -8,7 +8,7 @@ histogram_file = '/tmp/histogram.dat'
 x_min, x_max, y_min, y_max = 2300.0, 2500.0, -100.0, 0.0
 
 # Number of 2D regions in which the plot is divided.
-x_resolution, y_resolution = 200, 100
+x_resolution, y_resolution = 300, 150
 
 def read_angles(line):
     tokens = line.split(' ')
@@ -47,7 +47,7 @@ except Exception as e:
 points = [read_angles(line) for line in open(data_file)]
 points = [p for p in points if p[1]>y_min and p[1]<y_max and p[0]>=x_min and p[1]<=x_max]
 count = len(points)
-increment = 1000.0 / count / interval_surface
+increment = 1000.0 / float(count) / float(interval_surface)
 
 for i in points:
     x = int((i[0] - x_min) / x_interval_length)
@@ -67,5 +67,5 @@ for i, x in enumerate(x_intervals):
             #if loaded_histogram[i,j] != 0.0:
             #    print "%.2f %.2f %.2f"% (histogram[i,j], loaded_histogram[i,j],value)
 
-        o.write('%f %f %f \n' % (x, y, value))
+        o.write('%.3f %.3f %.3f \n' % (x, y, value))
     o.write('\n')
