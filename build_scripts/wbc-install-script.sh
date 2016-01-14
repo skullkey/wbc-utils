@@ -64,3 +64,9 @@ mv rx.sh rx.sh.orig
 cd /home/pi
 cp wbc-utils/startup_scripts/tx.sh wifibroadcast_fpv_scripts/tx.sh
 cp wbc-utils/startup_scripts/rx.sh wifibroadcast_fpv_scripts/rx.sh
+
+# Manually 
+echo "You will have to disable the serial port using raspi-config.  Simple type sudo raspi-config"
+
+
+
