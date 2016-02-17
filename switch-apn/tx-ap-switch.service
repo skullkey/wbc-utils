@@ -1,0 +1,11 @@
+[Unit]
+Description=tx-ap-switch
+After=multi-user.target
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/home/pi/wifibroadcast_fpv_scripts/tx-ap-switch.sh
+
+[Install]
+WantedBy=multi-user.target
+
