@@ -424,7 +424,7 @@ void render(telemetry_data_t *td)
 
   Start(s_width, s_height);
 
-  Background(0,0,0);
+//  Background(0,0,0);
   //draw_bat      (td, getWidth(10), getHeight(90), 3);
  
   Fill(HUD_R,HUD_G,HUD_B,1);
