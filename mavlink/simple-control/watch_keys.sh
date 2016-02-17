@@ -6,7 +6,7 @@ SIMPLE_PATH=/home/pi/wbc-utils/mavlink/simple-control
 cd $SIMPLE_PATH
 
 function clearfb {
-           dd if=/dev/zero of=/dev/fb0 &> /dev/null
+    dd if=/dev/zero of=/dev/fb0 &> /dev/null
 }
 
 function killall {
@@ -25,6 +25,8 @@ function help {
     echo "5 - Wbcrxd Stop"
     echo "6 - Kill OSD"
     echo "7 - Spectral scan"
+    echo "8 - Switch APN"
+    echo "9 - Switch WBCRXD"
     echo "0 - Shutdown"
     echo "?"
 
@@ -52,8 +54,12 @@ while true; do
 	7) killall
 	   sleep 1
 	   cd /home/pi/wbc-utils/ath9k-spectral-scan-2d
-	   ./ss2d &
+	   ./ss2d wlan0 &
 	   ;;
+        8) switch_flip_wbcrxd_apn apn
+           ;;
+        9) switch_flip_wbcrxd_apn wbcrxd
+           ;;        
 	0) killall
            echo "About to shutdown, are you sure? y/n"
            read -s -n 1 sure

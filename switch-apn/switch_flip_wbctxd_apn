@@ -1,0 +1,50 @@
+#!/bin/bash
+#Written by Philip Booysen <philipbooysen@gmail.com>
+#Thu Jan 14 14:38:14 SAST 2016
+
+if [ $# -ne 1 ] || [ "${1}" != "apn" ] && [ "${1}" != "wbctxd" ] ; then
+  echo "Usage: $0 [ apn | wbctxd ]"
+  exit
+fi
+
+if [ "${1}" == "apn"  ] ; then
+  # Stop wbctxd and start APN
+  echo "Stopping wbctxd and starting APN"
+  echo "  - systemctl stop wbctxd ..."
+  sudo systemctl stop wbctxd
+  # We stop everything for incase it was running anyway,
+  # for say you run this script twice with same parameter ;)
+  sudo systemctl stop isc-dhcp-server
+  sudo systemctl stop hostapd
+  sudo ifconfig wlan0 down
+  sudo ifdown wlan0
+  sudo cp /etc/network/interfaces.apn /etc/network/interfaces
+  sudo ifup wlan0
+  echo "  - systemctl start hostapd ..."
+  sudo systemctl start hostapd
+  echo "  - systemctl start isc-dhcp-server ..."
+  sudo systemctl start isc-dhcp-server
+  echo "APN : wbctxd_AP"
+  echo "WPA_passphrase : raspiwbctxd"
+  echo "Done!"
+fi
+
+if [ "${1}" == "wbctxd"  ] ; then
+  # Stop APN and start wbctxd
+  echo "Stopping APN and starting wbctxd"
+  echo "  - systemctl stop isc-dhcp-server ..."
+  sudo systemctl stop isc-dhcp-server
+  echo "  - systemctl stop hostapd ..."
+  sudo systemctl stop hostapd
+  # We stop everything for incase it was running anyway,
+  # for say you run this script twice with same parameter ;)
+  sudo systemctl stop wbctxd
+  sudo ifconfig wlan0 down
+  sudo ifdown wlan0
+  sudo cp /etc/network/interfaces.wbctxd /etc/network/interfaces
+  sudo ifup wlan0
+  echo "  - systemctl start wbctxd ..."
+  sudo systemctl start wbctxd
+  echo "WiFi Broadcasting service started, look out for HD streaming :)"
+  echo "Done!"
+fi
